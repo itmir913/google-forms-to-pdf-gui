@@ -49,12 +49,14 @@ class DragDropApp(TkinterDnD.Tk):
 
     def process_file_in_thread(self, file_path, progress_queue):
         # 파일 드롭 후, "처리중입니다."로 텍스트 변경
+        self.progress['value'] = 0
         self.drop_area.config(text="처리중입니다.")
 
         # 파일 처리 및 프로그레스 업데이트
         output_pdf_path = process_file(file_path, lambda value: progress_queue.put(value))
 
         # 처리 완료 후 메시지 박스 호출
+        self.progress['value'] = 100
         self.drop_area.config(text="완료되었습니다.")
         self.open_pdf(output_pdf_path)
 
