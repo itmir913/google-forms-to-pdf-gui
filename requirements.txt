@@ -1,0 +1,7 @@
+Jinja2
+pandas
+pdfkit
+xhtml2pdf
+PyPDF2
+tkinterdnd2
+
