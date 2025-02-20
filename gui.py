@@ -31,7 +31,7 @@ class DragDropApp(TkinterDnD.Tk):
         self.drop_area.dnd_bind('<<Drop>>', self.on_drop)
 
     def on_drop(self, event):
-        file_path = event.data
+        file_path = event.data.strip('{}')
         if file_path.endswith('.csv'):
             # 프로그래스 바 시작
             self.update()
