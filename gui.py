@@ -1,12 +1,14 @@
+import os
+import queue
 import subprocess
+import threading
 import tkinter as tk
-from tkinterdnd2 import TkinterDnD, DND_FILES
 from tkinter import messagebox
 from tkinter import ttk
-import threading
-import os
+
+from tkinterdnd2 import TkinterDnD, DND_FILES
+
 from file_processor import process_file
-import queue
 
 
 class DragDropApp(TkinterDnD.Tk):
@@ -15,16 +17,24 @@ class DragDropApp(TkinterDnD.Tk):
 
         self.title("Google Forms to PDF")
         self.geometry("500x500")
-        self.configure(bg="#f0f0f0")  # 전체 배경색 설정
+        self.configure(bg="white")
 
-        # 드래그 앤 드롭 영역 레이아웃 (전체 창 크기)
-        self.drop_area = tk.Label(self, text="여기에 CSV 파일을 드래그하세요", relief="solid", bg="#f5f5f5", fg="black",
-                                  font=("Arial", 12), anchor="center", justify="center", bd=5)
-        self.drop_area.pack(fill=tk.BOTH, expand=True)  # 전체 창을 채우도록 설정
+        # 드래그 앤 드롭 영역
+        self.drop_area = tk.Label(
+            self,
+            text="여기에 CSV 파일을 드래그하세요",
+            relief="solid",
+            bg="white",
+            fg="black",
+            font=("Arial", 12),
+            anchor="center",
+            justify="center",
+        )
+        self.drop_area.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)  # 여백 추가
 
         # 프로그래스 바 설정
         self.progress = ttk.Progressbar(self, length=300, mode='determinate', maximum=100, value=0)
-        self.progress.place(relx=0.5, rely=0.85, anchor="center")  # 하단 중앙에 배치
+        self.progress.place(relx=0.5, rely=0.85, anchor="center")
 
         # 드래그 앤 드롭 이벤트 연결
         self.drop_area.drop_target_register(DND_FILES)
