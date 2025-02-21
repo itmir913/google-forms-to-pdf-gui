@@ -1,35 +1,17 @@
 import os
-import pandas as pd
-from jinja2 import Template
-import pdfkit
-import PyPDF2
 import shutil
 import tempfile
 
+import PyPDF2
+import pandas as pd
+import pdfkit
+from jinja2 import Template
+
+
 # Jinja2 템플릿 정의
-html_template = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body { font-family: "맑은 고딕", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
-            h1 { color: #333; }
-            .question { font-weight: bold; margin-top: 20px; }
-            .answer { margin-bottom: 20px; }
-            .section { margin-bottom: 40px; page-break-before: always; } /* 페이지 나누기 */
-        </style>
-    </head>
-    <body>
-        <div class="section">
-            <h1>설문 조사 결과</h1>
-            {% for question, answer in respondent.items() %}
-                <h3 class="question">{{ question }}</h3>
-                <h4 class="answer">{{ answer }}</h4>
-            {% endfor %}
-        </div>
-    </body>
-    </html>
-    """
+def load_template(template_path):
+    with open(template_path, "r", encoding="utf-8") as file:
+        return file.read()
 
 
 def process_file(file_path, update_progress):
@@ -61,6 +43,9 @@ def process_file(file_path, update_progress):
         "load-error-handling": "ignore",
         "load-media-error-handling": "ignore"
     }
+
+    template_path = os.path.join(base_path, "bin", "template.html")
+    html_template = load_template(template_path)
 
     # 중간 저장을 위해 파일을 열고 진행
     with open(output_pdf_path, "wb") as output_pdf:
