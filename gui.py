@@ -3,12 +3,16 @@ import queue
 import subprocess
 import threading
 import tkinter as tk
+import webbrowser
 from tkinter import messagebox
 from tkinter import ttk
 
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
 from file_processor import process_file
+
+AUTHOR = "운양고등학교 이종환T"
+VERSION = "2025.02.21."
 
 
 class DragDropApp(TkinterDnD.Tk):
@@ -18,6 +22,7 @@ class DragDropApp(TkinterDnD.Tk):
         self.title("Google Forms to PDF")
         self.geometry("500x500")
         self.configure(bg="white")
+        self.create_menu()
 
         # 드래그 앤 드롭 영역
         self.drop_area = tk.Label(
@@ -96,6 +101,33 @@ class DragDropApp(TkinterDnD.Tk):
     def bind_progress_event(self):
         # 프로그래스 업데이트 이벤트 바인딩
         self.bind("<<ProgressUpdate>>", self.on_progress_update)
+
+    def create_menu(self):
+        """메뉴바 생성"""
+        menubar = tk.Menu(self)
+
+        # About 메뉴 생성
+        about_menu = tk.Menu(menubar, tearoff=0)
+        about_menu.add_command(label="프로그램 정보", command=self.show_program_info)
+        about_menu.add_command(label="GitHub 바로가기", command=self.open_github)
+        menubar.add_cascade(label="About", menu=about_menu)
+
+        # 메뉴바를 메인 윈도우에 추가
+        self.config(menu=menubar)
+
+    def show_program_info(self):
+        info_title = "프로그램 정보"
+        info_message = (
+            f"제작자: {AUTHOR}\n"
+            f"버전: {VERSION}\n"
+            "\n"
+            "이 프로그램은 구글 폼 설문지 CSV 결과를 PDF로 변환하는 Python 프로그램입니다."
+        )
+
+        messagebox.showinfo(info_title, info_message)
+
+    def open_github(self):
+        webbrowser.open("https://github.com/itmir913/google-forms-to-pdf-gui/releases")
 
 
 if __name__ == "__main__":
