@@ -54,6 +54,7 @@ def process_file(file_path, update_progress, batch_size):
     # template 설정
     template_path = os.path.join(base_path, "bin", "template.html")
     html_template = load_template(template_path)
+    template = Template(html_template)
 
     # load pandas
     records = df.to_dict(orient="records")
@@ -63,7 +64,6 @@ def process_file(file_path, update_progress, batch_size):
     # 공백 페이지 수 계산
     if batch_size != 1:
         total_responses = len(responses)
-        template = Template(html_template)
         for idx, response in enumerate(responses):
             html_content = template.render(responses=[response])
 
