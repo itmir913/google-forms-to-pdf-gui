@@ -22,6 +22,7 @@ class DragDropApp(TkinterDnD.Tk):
 
         self.title("Google Forms to PDF")
         self.geometry("500x500")
+        self.minsize(500, 500)
         self.configure(bg="white")
         self.create_menu()
 
@@ -32,47 +33,58 @@ class DragDropApp(TkinterDnD.Tk):
         self.drop_area = tk.Label(
             self,
             text="\n".join([
-                "여기에 Google Forms 응답결과",
+                "여기에 Google Forms 설문지 응답 결과",
                 "CSV 파일을 Drag & Drop 하세요"
             ]),
             relief="solid",
+            bd=2,
             bg="white",
             fg="black",
             font=("Arial", 15),
             anchor="center",
             justify="center",
-            wraplength=300,
+            wraplength=450,
         )
-        self.drop_area.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)  # 여백 추가
+        self.drop_area.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        self.drop_area.drop_target_register(DND_FILES)
+        self.drop_area.dnd_bind('<<Drop>>', self.on_drop)
 
-        # 라디오 버튼 추가
-        self.batch_size_var = tk.IntVar(value=2)  # 기본값 2로 설정
+        # 라디오 버튼
+        radio_frame = tk.Frame(self, bg="white", relief="solid", bd=2)
+        radio_frame.pack(fill=tk.BOTH, padx=20)
 
-        radio_frame = tk.Frame(self, bg="white")  # 배경색 통일
-        radio_frame.pack(pady=5)
+        self.batch_size_var = tk.IntVar(value=2)
 
         self.radio_1 = tk.Radiobutton(
-            radio_frame, text="빈 페이지 추가하지 않음 (단면 인쇄용)", variable=self.batch_size_var, value=1, bg="white"
+            radio_frame,
+            text="빈 페이지 추가하지 않음 (단면 인쇄용)",
+            variable=self.batch_size_var,
+            value=1,
+            bg="white"
         )
         self.radio_1.pack(anchor="w", padx=10, pady=2)
 
         self.radio_2 = tk.Radiobutton(
-            radio_frame, text="2의 배수로 빈 페이지 추가 (양면 인쇄용)", variable=self.batch_size_var, value=2, bg="white"
+            radio_frame,
+            text="2의 배수로 빈 페이지 추가 (양면 인쇄용)",
+            variable=self.batch_size_var,
+            value=2,
+            bg="white"
         )
         self.radio_2.pack(anchor="w", padx=10, pady=2)
 
         self.radio_4 = tk.Radiobutton(
-            radio_frame, text="4의 배수로 빈 페이지 추가 (2쪽 모아찍기 & 양면 인쇄용)", variable=self.batch_size_var, value=4, bg="white"
+            radio_frame,
+            text="4의 배수로 빈 페이지 추가 (2쪽 모아찍기 & 양면 인쇄용)",
+            variable=self.batch_size_var,
+            value=4,
+            bg="white"
         )
         self.radio_4.pack(anchor="w", padx=10, pady=2)
 
-        # 프로그래스 바 설정 (라디오 버튼 아래, 맨 아래 배치)
+        # 프로그래스 바 설정
         self.progress = ttk.Progressbar(self, length=300, mode='determinate', maximum=100, value=0)
-        self.progress.pack(pady=10, fill="x", side="bottom")
-
-        # 드래그 앤 드롭 이벤트 연결
-        self.drop_area.drop_target_register(DND_FILES)
-        self.drop_area.dnd_bind('<<Drop>>', self.on_drop)
+        self.progress.pack(padx=20, pady=20, fill="x", side="bottom")
 
     def on_drop(self, event):
         file_path = event.data.strip('{}')
