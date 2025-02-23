@@ -61,23 +61,24 @@ def process_file(file_path, update_progress, batch_size):
                   "records": record} for record in records]
 
     # 공백 페이지 수 계산
-    total_responses = len(responses)
-    template = Template(html_template)
-    for idx, response in enumerate(responses):
-        html_content = template.render(responses=[response])
+    if batch_size != 1:
+        total_responses = len(responses)
+        template = Template(html_template)
+        for idx, response in enumerate(responses):
+            html_content = template.render(responses=[response])
 
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
-            temp_pdf_path = temp_pdf.name
-            pdfkit.from_string(html_content, temp_pdf_path, configuration=config, options=options)
+            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
+                temp_pdf_path = temp_pdf.name
+                pdfkit.from_string(html_content, temp_pdf_path, configuration=config, options=options)
 
-            pdf_reader = PyPDF2.PdfReader(temp_pdf)
-            num_pages = len(pdf_reader.pages)
-            response["blank_pages"] = batch_size - (num_pages % batch_size) if num_pages % batch_size != 0 else 0
+                pdf_reader = PyPDF2.PdfReader(temp_pdf)
+                num_pages = len(pdf_reader.pages)
+                response["blank_pages"] = batch_size - (num_pages % batch_size) if num_pages % batch_size != 0 else 0
 
-        if os.path.exists(temp_pdf_path):
-            os.remove(temp_pdf_path)
+            if os.path.exists(temp_pdf_path):
+                os.remove(temp_pdf_path)
 
-        update_progress(idx / total_responses * 100)
+            update_progress(idx / total_responses * 100)
 
     # 최종 PDF 렌더링
     html_content = template.render(responses=responses)
