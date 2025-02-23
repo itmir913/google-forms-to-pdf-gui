@@ -41,6 +41,7 @@ class DragDropApp(TkinterDnD.Tk):
             font=("Arial", 15),
             anchor="center",
             justify="center",
+            wraplength=300,
         )
         self.drop_area.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)  # 여백 추가
 
@@ -103,7 +104,8 @@ class DragDropApp(TkinterDnD.Tk):
 
         # 처리 완료 후 메시지 박스 호출
         self.progress['value'] = 100
-        self.drop_area.config(text="완료되었습니다.")
+        self.drop_area.config(text=f"완료되었습니다.\n"
+                                   f"파일 위치: {output_pdf_path}")
         self.open_pdf(output_pdf_path)
 
     def open_pdf(self, pdf_path):
