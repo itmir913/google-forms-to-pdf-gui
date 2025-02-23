@@ -2,19 +2,22 @@
 <html>
 <head>
     <style>
-        body { font-family: "맑은 고딕", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; }
-        h1 { color: #333; }
-        .question { font-weight: bold; margin-top: 20px; }
-        .answer { margin-bottom: 20px; }
-        .section { margin-bottom: 40px; page-break-before: always; } /* 페이지 나누기 */
+        body { font-family: "맑은 고딕", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; line-height: 1.6; margin: 20px; color: #000000; background-color: #ffffff; }
+        h1 { color: #000000; text-align: center; border-bottom: 2px solid #000000; padding-bottom: 10px; }
+        .question { font-weight: bold; font-size: 1.5em; color: #000000; margin-top: 20px; }
+        .answer { margin-bottom: 20px; font-size: 1.1em; padding: 8px; border: 1px solid #000000; border-radius: 5px; background-color: #ffffff; color: #000000; }
+        .section { margin-bottom: 40px; page-break-before: always; }
+        .section:last-child { page-break-before: auto; } /* Avoid extra page break on the last section */
     </style>
 </head>
 <body>
 <div class="section">
     <h1>Google Forms Results</h1>
     {% for question, answer in respondent.items() %}
-    <h3 class="question">{{ question }}</h3>
-    <h4 class="answer">{{ answer }}</h4>
+    <div>
+        <h3 class="question">{{ question }}</h3>
+        <p class="answer">{{ answer }}</p>
+    </div>
     {% endfor %}
 </div>
 </body>
