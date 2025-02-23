@@ -45,7 +45,9 @@ def process_file(file_path, update_progress, batch_size):
         "custom-header": [("Accept-Encoding", "gzip")],
         "no-stop-slow-scripts": "",
         "load-error-handling": "ignore",
-        "load-media-error-handling": "ignore"
+        "load-media-error-handling": "ignore",
+        "no-images": "",  # Prevent images from being included
+        "dpi": 75,  # Lower resolution for smaller size
     }
 
     template_path = os.path.join(base_path, "bin", "template.html")
