@@ -26,7 +26,7 @@ def process_file(file_path, update_progress, batch_size):
 
     # 파일의 디렉토리 경로와 파일 이름 추출
     folder_path = os.path.dirname(file_path)
-    file_name = os.path.splitext(os.path.basename(file_path))[0]  # 확장자 제외한 파일 이름
+    file_name = os.path.splitext(os.path.basename(file_path))[0]
 
     # 최종 PDF 파일 이름 생성
     output_pdf_path = os.path.join(folder_path, f"output_{file_name}.pdf")
@@ -47,47 +47,41 @@ def process_file(file_path, update_progress, batch_size):
         "load-error-handling": "ignore",
         "load-media-error-handling": "ignore",
         "no-images": "",  # Prevent images from being included
-        "dpi": 75,  # Lower resolution for smaller size
+        "page-size": "A4",
+        "dpi": 50,  # Lower resolution for smaller size
     }
 
+    # template 설정
     template_path = os.path.join(base_path, "bin", "template.html")
     html_template = load_template(template_path)
 
-    # 중간 저장을 위해 파일을 열고 진행
-    with open(output_pdf_path, "wb") as output_pdf:
-        pdf_writer = PyPDF2.PdfWriter()
+    # load pandas
+    records = df.to_dict(orient="records")
+    responses = [{"blank_pages": 0,
+                  "records": record} for record in records]
 
-        # 각 응답자를 PDF로 처리 후 저장
-        for idx, respondent in enumerate(df.to_dict(orient="records")):
-            # HTML 렌더링
-            template = Template(html_template)
-            html_content = template.render(respondent=respondent)
+    # 공백 페이지 수 계산
+    total_responses = len(responses)
+    template = Template(html_template)
+    for idx, response in enumerate(responses):
+        html_content = template.render(responses=[response])
 
-            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
-                temp_pdf_path = temp_pdf.name
-                pdfkit.from_string(html_content, temp_pdf_path, configuration=config, options=options)
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
+            temp_pdf_path = temp_pdf.name
+            pdfkit.from_string(html_content, temp_pdf_path, configuration=config, options=options)
 
-                pdf_reader = PyPDF2.PdfReader(temp_pdf)
-                num_pages = len(pdf_reader.pages)
+            pdf_reader = PyPDF2.PdfReader(temp_pdf)
+            num_pages = len(pdf_reader.pages)
+            response["blank_pages"] = batch_size - (num_pages % batch_size) if num_pages % batch_size != 0 else 0
 
-                # 응답자 PDF 페이지를 output_pdf에 바로 기록
-                for page_num in range(num_pages):
-                    pdf_writer.add_page(pdf_reader.pages[page_num])
+        if os.path.exists(temp_pdf_path):
+            os.remove(temp_pdf_path)
 
-                # 응답자 PDF에 빈 페이지 추가
-                pages_to_add = batch_size - (num_pages % batch_size) if num_pages % batch_size != 0 else 0
-                for _ in range(pages_to_add):
-                    pdf_writer.add_blank_page(width=pdf_reader.pages[0].mediabox[2],
-                                              height=pdf_reader.pages[0].mediabox[3])
+        update_progress(idx / total_responses * 100)
 
-                # 바로 결과를 파일에 저장
-                pdf_writer.write(output_pdf)
-
-            # 처리한 임시 PDF 파일 삭제
-            if os.path.exists(temp_pdf_path):
-                os.remove(temp_pdf_path)
-
-            update_progress((idx + 1) / len(df) * 100)
+    # 최종 PDF 렌더링
+    html_content = template.render(responses=responses)
+    pdfkit.from_string(html_content, output_pdf_path, configuration=config, options=options)
 
     print("PDF 생성 완료!")
     return output_pdf_path

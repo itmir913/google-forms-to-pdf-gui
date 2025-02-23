@@ -7,18 +7,30 @@
         .question { font-weight: bold; font-size: 1.5em; color: #000000; margin-top: 20px; }
         .answer { margin-bottom: 20px; font-size: 1.1em; padding: 8px; border: 1px solid #000000; border-radius: 5px; background-color: #ffffff; color: #000000; }
         .section { margin-bottom: 40px; page-break-before: always; }
-        .section:last-child { page-break-before: auto; } /* Avoid extra page break on the last section */
+        .empty-page { height: 100%; page-break-before: always; }
     </style>
 </head>
 <body>
+{% for response in responses %}
+
+<!-- records 항목 처리 -->
 <div class="section">
     <h1>Google Forms Results</h1>
-    {% for question, answer in respondent.items() %}
+    {% for question, answer in response.records.items() %}
     <div>
         <h3 class="question">{{ question }}</h3>
         <p class="answer">{{ answer }}</p>
     </div>
     {% endfor %}
 </div>
+
+<!-- 빈 페이지를 blank_pages 숫자만큼 추가 -->
+{% for _ in range(response.blank_pages) %}
+<div class="empty-page">
+    <hr style="visibility: hidden;">
+</div>
+{% endfor %}
+
+{% endfor %}
 </body>
 </html>
