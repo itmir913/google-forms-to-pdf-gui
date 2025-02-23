@@ -18,7 +18,11 @@ def process_file(file_path, update_progress, batch_size):
     print(f"파일 처리 시작: {file_path}")
 
     # CSV 파일 불러오기
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, header=None)
+    df = df.loc[:, df.iloc[0].notna()]
+    df.columns = df.iloc[0]
+    df = df.drop(0, axis=0)
+    df = df.fillna("No answer")
 
     # 파일의 디렉토리 경로와 파일 이름 추출
     folder_path = os.path.dirname(file_path)
