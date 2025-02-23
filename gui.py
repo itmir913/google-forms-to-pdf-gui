@@ -76,23 +76,26 @@ class DragDropApp(TkinterDnD.Tk):
 
     def on_drop(self, event):
         file_path = event.data.strip('{}')
-        if file_path.endswith('.csv'):
-            # 프로그래스 바 시작
-            self.update()
+        if not file_path.endswith('.csv'):
+            self.drop_area.config(text=f"CSV 파일만 처리할 수 있습니다. 다시 선택해주세요.")
+            return
 
-            # 큐 설정 (메인 스레드에서 값 받기)
-            self.progress_queue = queue.Queue()
+        # 프로그래스 바 시작
+        self.update()
 
-            # 선택한 배수 값 가져오기
-            batch_size = self.batch_size_var.get()
+        # 큐 설정 (메인 스레드에서 값 받기)
+        self.progress_queue = queue.Queue()
 
-            # 파일 처리 작업을 비동기적으로 실행
-            threading.Thread(target=self.process_file_in_thread,
-                             args=(file_path, self.progress_queue, batch_size),
-                             daemon=True).start()
+        # 선택한 배수 값 가져오기
+        batch_size = self.batch_size_var.get()
 
-            # 프로그래스 바 업데이트 및 메시지 박스 호출
-            self.handle_progress_signal()
+        # 파일 처리 작업을 비동기적으로 실행
+        threading.Thread(target=self.process_file_in_thread,
+                         args=(file_path, self.progress_queue, batch_size),
+                         daemon=True).start()
+
+        # 프로그래스 바 업데이트 및 메시지 박스 호출
+        self.handle_progress_signal()
 
     def process_file_in_thread(self, file_path, progress_queue, batch_size):
         # 파일 드롭 후, "처리중입니다."로 텍스트 변경
