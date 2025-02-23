@@ -3,6 +3,7 @@ import queue
 import subprocess
 import threading
 import tkinter as tk
+import tkinter.font as tkFont
 import webbrowser
 from tkinter import messagebox
 from tkinter import ttk
@@ -12,7 +13,7 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 from file_processor import process_file
 
 AUTHOR = "운양고등학교 이종환T"
-VERSION = "2025.02.21."
+VERSION = "2025.02.23."
 
 
 class DragDropApp(TkinterDnD.Tk):
@@ -37,13 +38,34 @@ class DragDropApp(TkinterDnD.Tk):
             relief="solid",
             bg="white",
             fg="black",
-            font=("Arial", 12),
+            font=("Arial", 15),
             anchor="center",
             justify="center",
         )
-        self.drop_area.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)  # 여백 추가
+        self.drop_area.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)  # 여백 추가
 
-        # 프로그래스 바 설정
+        # 라디오 버튼 추가
+        self.batch_size_var = tk.IntVar(value=2)  # 기본값 2로 설정
+
+        radio_frame = tk.Frame(self, bg="white")  # 배경색 통일
+        radio_frame.pack(pady=5)
+
+        self.radio_1 = tk.Radiobutton(
+            radio_frame, text="빈 페이지 추가하지 않음 (단면 인쇄용)", variable=self.batch_size_var, value=1, bg="white"
+        )
+        self.radio_1.pack(anchor="w", padx=10, pady=2)
+
+        self.radio_2 = tk.Radiobutton(
+            radio_frame, text="2의 배수로 빈 페이지 추가 (양면 인쇄용)", variable=self.batch_size_var, value=2, bg="white"
+        )
+        self.radio_2.pack(anchor="w", padx=10, pady=2)
+
+        self.radio_4 = tk.Radiobutton(
+            radio_frame, text="4의 배수로 빈 페이지 추가 (2쪽 모아찍기 & 양면 인쇄용)", variable=self.batch_size_var, value=4, bg="white"
+        )
+        self.radio_4.pack(anchor="w", padx=10, pady=2)
+
+        # 프로그래스 바 설정 (라디오 버튼 아래, 맨 아래 배치)
         self.progress = ttk.Progressbar(self, length=300, mode='determinate', maximum=100, value=0)
         self.progress.pack(pady=10, fill="x", side="bottom")
 
@@ -60,21 +82,24 @@ class DragDropApp(TkinterDnD.Tk):
             # 큐 설정 (메인 스레드에서 값 받기)
             self.progress_queue = queue.Queue()
 
+            # 선택한 배수 값 가져오기
+            batch_size = self.batch_size_var.get()
+
             # 파일 처리 작업을 비동기적으로 실행
             threading.Thread(target=self.process_file_in_thread,
-                             args=(file_path, self.progress_queue),
+                             args=(file_path, self.progress_queue, batch_size),
                              daemon=True).start()
 
             # 프로그래스 바 업데이트 및 메시지 박스 호출
             self.handle_progress_signal()
 
-    def process_file_in_thread(self, file_path, progress_queue):
+    def process_file_in_thread(self, file_path, progress_queue, batch_size):
         # 파일 드롭 후, "처리중입니다."로 텍스트 변경
         self.progress['value'] = 0
         self.drop_area.config(text="처리중입니다.")
 
         # 파일 처리 및 프로그레스 업데이트
-        output_pdf_path = process_file(file_path, lambda value: progress_queue.put(value))
+        output_pdf_path = process_file(file_path, lambda value: progress_queue.put(value), batch_size)
 
         # 처리 완료 후 메시지 박스 호출
         self.progress['value'] = 100

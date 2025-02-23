@@ -14,7 +14,7 @@ def load_template(template_path):
         return file.read()
 
 
-def process_file(file_path, update_progress):
+def process_file(file_path, update_progress, batch_size):
     print(f"파일 처리 시작: {file_path}")
 
     # CSV 파일 불러오기
@@ -68,8 +68,9 @@ def process_file(file_path, update_progress):
                 for page_num in range(num_pages):
                     pdf_writer.add_page(pdf_reader.pages[page_num])
 
-                # 응답자 PDF가 홀수 페이지일 경우 빈 페이지 추가
-                if num_pages % 2 != 0:
+                # 응답자 PDF에 빈 페이지 추가
+                pages_to_add = batch_size - (num_pages % batch_size) if num_pages % batch_size != 0 else 0
+                for _ in range(pages_to_add):
                     pdf_writer.add_blank_page(width=pdf_reader.pages[0].mediabox[2],
                                               height=pdf_reader.pages[0].mediabox[3])
 
