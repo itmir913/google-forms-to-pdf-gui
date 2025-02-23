@@ -2,23 +2,26 @@
 <html>
 <head>
     <style>
-        body { font-family: "맑은 고딕", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; line-height: 1.6; margin: 20px; color: #000000; background-color: #ffffff; }
-        h1 { color: #000000; text-align: center; border-bottom: 2px solid #000000; padding-bottom: 10px; }
-        .question { font-weight: bold; font-size: 1.5em; color: #000000; margin-top: 20px; }
-        .answer { margin-bottom: 20px; font-size: 1.1em; padding: 8px; border: 1px solid #000000; border-radius: 5px; background-color: #ffffff; color: #000000; }
-        .section { margin-bottom: 40px; page-break-before: always; }
-        .empty-page { height: 100%; page-break-before: always; }
+        body { font-family: "맑은 고딕", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+               color: #000000; background-color: #ffffff; }
+        h1 { text-align: center; border-bottom: 2px solid #000000;
+             padding-bottom: 20px; margin-bottom: 20px; }
+        .section { margin-top: 20px; padding-bottom: 20px; }
+        .section:last-child { padding-bottom: 0; }
+        .question { font-size: 1.5em; font-weight: bold; }
+        .answer { font-size: 1.2em; padding: 10px; border: 1px solid #000000; }
+        .page-break { page-break-before: always; }
     </style>
 </head>
 <body>
 {% for response in responses %}
 
 <!-- records 항목 처리 -->
-<div class="section">
+<div class="page-break">
     <h1>Google Forms Results</h1>
     {% for question, answer in response.records.items() %}
-    <div>
-        <h3 class="question">{{ question }}</h3>
+    <div class="section">
+        <p class="question">{{ question }}</p>
         <p class="answer">{{ answer }}</p>
     </div>
     {% endfor %}
@@ -26,7 +29,7 @@
 
 <!-- 빈 페이지를 blank_pages 숫자만큼 추가 -->
 {% for _ in range(response.blank_pages) %}
-<div class="empty-page">
+<div class="page-break">
     <hr style="visibility: hidden;">
 </div>
 {% endfor %}
