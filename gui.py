@@ -45,7 +45,7 @@ class DragDropApp(TkinterDnD.Tk):
 
         # 프로그래스 바 설정
         self.progress = ttk.Progressbar(self, length=300, mode='determinate', maximum=100, value=0)
-        self.progress.place(relx=0.5, rely=0.85, anchor="center")
+        self.progress.pack(pady=10, fill="x", side="bottom")
 
         # 드래그 앤 드롭 이벤트 연결
         self.drop_area.drop_target_register(DND_FILES)
