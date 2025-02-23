@@ -24,10 +24,16 @@ class DragDropApp(TkinterDnD.Tk):
         self.configure(bg="white")
         self.create_menu()
 
+        default_font = tkFont.nametofont("TkDefaultFont")
+        default_font.configure(family="Arial", size=12)
+
         # 드래그 앤 드롭 영역
         self.drop_area = tk.Label(
             self,
-            text="여기에 CSV 파일을 드래그하세요",
+            text="\n".join([
+                "여기에 Google Forms 응답결과",
+                "CSV 파일을 Drag & Drop 하세요"
+            ]),
             relief="solid",
             bg="white",
             fg="black",
