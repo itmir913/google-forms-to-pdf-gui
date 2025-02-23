@@ -76,7 +76,7 @@ class DragDropApp(TkinterDnD.Tk):
 
     def on_drop(self, event):
         file_path = event.data.strip('{}')
-        if not file_path.endswith('.csv'):
+        if not file_path.lower().endswith('.csv'):
             self.drop_area.config(text=f"CSV 파일만 처리할 수 있습니다. 다시 선택해주세요.")
             return
 
