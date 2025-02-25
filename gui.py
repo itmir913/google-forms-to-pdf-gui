@@ -114,14 +114,18 @@ class DragDropApp(TkinterDnD.Tk):
         self.progress['value'] = 0
         self.drop_area.config(text="처리중입니다.")
 
-        # 파일 처리 및 프로그레스 업데이트
-        output_pdf_path = process_file(file_path, lambda value: progress_queue.put(value), batch_size)
+        try:
+            # 파일 처리 및 프로그레스 업데이트
+            output_pdf_path = process_file(file_path, lambda value: progress_queue.put(value), batch_size)
 
-        # 처리 완료 후 메시지 박스 호출
-        self.progress['value'] = 100
-        self.drop_area.config(text=f"완료되었습니다.\n"
-                                   f"파일 위치: {output_pdf_path}")
-        self.open_pdf(output_pdf_path)
+            # 처리 완료 후 메시지 박스 호출
+            self.progress['value'] = 100
+            self.drop_area.config(text=f"완료되었습니다.\n"
+                                       f"파일 위치: {output_pdf_path}")
+            self.open_pdf(output_pdf_path)
+        except Exception as e:
+            self.progress['value'] = 0
+            messagebox.showerror("오류", f"오류로 인해 처리할 수 없습니다: {e}")
 
     def open_pdf(self, pdf_path):
         """자동으로 PDF 파일을 기본 뷰어로 실행하는 함수"""
