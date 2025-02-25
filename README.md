@@ -1,6 +1,6 @@
 # Google Forms to PDF
 
-![google_forms_to_pdf](https://github.com/user-attachments/assets/2ca0d445-c3c7-4461-84a2-b6527a3c1937)
+![google_forms_to_pdf](https://github.com/user-attachments/assets/d1540151-6c3c-4fee-ace2-3d1df7ce87dc)
 
 ## 개요
 이 프로그램은 Google Forms 설문지 응답 결과 CSV 파일을 PDF로 변환하는 Python 기반 GUI 프로그램입니다. 설문 결과를 인쇄하기 쉽게 정리하고, 양면 인쇄를 고려하여 빈 페이지를 자동으로 삽입하는 기능을 제공합니다.

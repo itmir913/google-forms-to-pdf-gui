@@ -13,7 +13,7 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 from file_processor import process_file
 
 AUTHOR = "운양고등학교 이종환T"
-VERSION = "2025.02.26-v0.9"
+VERSION = "2025.02.26-v0.10"
 
 
 class DragDropApp(TkinterDnD.Tk):
