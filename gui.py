@@ -53,6 +53,9 @@ class DragDropApp(TkinterDnD.Tk):
         radio_frame = tk.Frame(self, bg="white", relief="solid", bd=2)
         radio_frame.pack(fill=tk.BOTH, padx=20)
 
+        page_option_label = tk.Label(radio_frame, text="[페이지 옵션]", bg="white")
+        page_option_label.pack(anchor="center", padx=20, pady=10)
+
         self.batch_size_var = tk.IntVar(value=2)
 
         self.radio_1 = tk.Radiobutton(
