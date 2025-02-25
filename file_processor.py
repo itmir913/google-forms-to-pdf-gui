@@ -27,6 +27,26 @@ def detect_csv_encoding(file_path):
         return 'utf-8'
 
 
+def count_valid_pages(pdf_path):
+    # PDF 파일 열기
+    with open(pdf_path, "rb") as file:
+        pdf_reader = PyPDF2.PdfReader(file)
+        num_pages = len(pdf_reader.pages)
+
+        valid_pages = 0
+
+        # 각 페이지의 텍스트 추출 후 텍스트가 있는지 검사
+        for page_num in range(num_pages):
+            page = pdf_reader.pages[page_num]
+            text = page.extract_text()
+
+            # 텍스트가 있으면 유효한 페이지로 카운트
+            if text.strip():  # strip()으로 공백을 제거하고 텍스트가 있으면
+                valid_pages += 1
+
+        return valid_pages
+
+
 def process_file(file_path, update_progress, batch_size):
     print(f"파일 처리 시작: {file_path}")
 
@@ -88,8 +108,7 @@ def process_file(file_path, update_progress, batch_size):
                 temp_pdf_path = temp_pdf.name
                 pdfkit.from_string(html_content, temp_pdf_path, configuration=config, options=options)
 
-                pdf_reader = PyPDF2.PdfReader(temp_pdf)
-                num_pages = len(pdf_reader.pages)
+                num_pages = count_valid_pages(temp_pdf_path)
                 response["blank_pages"] = batch_size - (num_pages % batch_size) if num_pages % batch_size != 0 else 0
 
             if os.path.exists(temp_pdf_path):
