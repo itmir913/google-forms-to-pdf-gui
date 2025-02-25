@@ -66,6 +66,8 @@ def process_file(file_path, update_progress, batch_size):
         "no-images": "",  # Prevent images from being included
         "page-size": "A4",
         "dpi": 50,  # Lower resolution for smaller size
+        'no-outline': None,
+        'disable-smart-shrinking': None,
     }
 
     # template 설정

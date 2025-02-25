@@ -35,7 +35,7 @@
         }
         td.question {
             width: 30%;
-            font-size: 1.3em;
+            font-size: 1.1em;
             font-weight: bold;
             background-color: #f5f5f5;
             padding: 12px;
@@ -43,7 +43,7 @@
         }
         td.answer {
             width: 70%;
-            font-size: 1.1em;
+            font-size: 1.0em;
             padding: 12px;
             border-radius: 5px;
             background-color: #ffffff;
@@ -57,6 +57,7 @@
     </style>
 </head>
 <body>
+
 {% for response in responses %}
 <div class="page-break">
     <h1>Google Forms Results</h1>
@@ -79,11 +80,15 @@
     </table>
 </div>
 
+{% if response.blank_pages > 0 %}
 {% for _ in range(response.blank_pages) %}
-<div class="page-break">
-    <hr style="visibility: hidden;">
+<div class="page-break"
+     style="text-align: center; height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <span style="font-size: 2em; color: #eee;">Blank Page</span>
 </div>
 {% endfor %}
+{% endif %}
+
 {% endfor %}
 </body>
 </html>
