@@ -3,6 +3,7 @@ import shutil
 import tempfile
 
 import PyPDF2
+import chardet
 import pandas as pd
 import pdfkit
 from jinja2 import Template
@@ -14,17 +15,31 @@ def load_template(template_path):
         return file.read()
 
 
+def detect_csv_encoding(file_path):
+    try:
+        with open(file_path, 'rb') as f:
+            result = chardet.detect(f.read())
+        encoding = result['encoding']
+        print(f"Detected encoding: {encoding}")
+        return encoding
+    except Exception as e:
+        print(f"Encoding detection failed: {e}")
+        return 'utf-8'
+
+
 def process_file(file_path, update_progress, batch_size):
     print(f"파일 처리 시작: {file_path}")
 
     # CSV 파일 불러오기
-    df = pd.read_csv(file_path, header=None)
+    df = pd.read_csv(file_path,
+                     header=None,
+                     encoding=detect_csv_encoding(file_path))
     df = df.loc[:, df.iloc[0].notna()]
     df.columns = df.iloc[0]
     df = df.drop(0, axis=0)
     df = df.dropna(how='all')
     df = df.fillna("No answer")
-    df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+    df = df.apply(lambda col: col.map(lambda x: x.strip() if isinstance(x, str) else x))
 
     # 파일의 디렉토리 경로와 파일 이름 추출
     folder_path = os.path.dirname(file_path)
