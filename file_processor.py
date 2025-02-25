@@ -24,6 +24,7 @@ def process_file(file_path, update_progress, batch_size):
     df = df.drop(0, axis=0)
     df = df.dropna(how='all')
     df = df.fillna("No answer")
+    df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
     # 파일의 디렉토리 경로와 파일 이름 추출
     folder_path = os.path.dirname(file_path)
