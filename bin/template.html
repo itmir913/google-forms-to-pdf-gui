@@ -2,14 +2,59 @@
 <html>
 <head>
     <style>
-        body { font-family: "맑은 고딕", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-               color: #000000; background-color: #ffffff; }
-        h1 { text-align: center; border-bottom: 2px solid #000000;
-             padding-bottom: 20px; margin-bottom: 20px; }
-        .section { margin-top: 20px; padding-bottom: 20px; }
-        .section:last-child { padding-bottom: 0; }
-        .question { font-size: 1.5em; font-weight: bold; }
-        .answer { font-size: 1.2em; padding: 10px; border: 1px solid #000000; }
+        body {
+            font-family: "맑은 고딕", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+            color: #000000; background-color: #ffffff;
+            margin: 20px;
+        }
+        h1 {
+            font-size: 1.8em; /* 글자 크기 변경 */
+            text-align: center;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-top: 20px;
+            padding-bottom: 20px;
+        }
+        .question {
+            width: 30%;
+            font-size: 1.3em; /* 글자 크기 변경 */
+            font-weight: bold;
+            background-color: #f0f0f0; /* 배경색 추가 */
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .answer {
+            width: 70%;
+            font-size: 1.1em; /* 글자 크기 변경 */
+            padding: 10px;
+            border: 1px solid #000000;
+            border-radius: 5px;
+            background-color: #ffffff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #000000;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle; /* 내용 정렬 */
+            word-break: break-word; /* 긴 단어 줄바꿈 */
+            white-space: normal; /* 자동 줄바꿈 */
+        }
+        th {
+            background-color: #d9d9d9; /* 테이블 헤더 배경색 */
+            font-size: 1.2em; /* 글자 크기 변경 */
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /* 테이블 홀짝 줄무늬 */
+        }
     </style>
     <style>
         .page-break { page-break-before: always; }
@@ -21,12 +66,24 @@
 <!-- records 항목 처리 -->
 <div class="page-break">
     <h1>Google Forms Results</h1>
-    {% for question, answer in response.records.items() %}
-    <div class="section">
-        <p class="question">{{ question }}</p>
-        <p class="answer">{{ answer }}</p>
-    </div>
-    {% endfor %}
+
+    <table>
+        {% for question, answer in response.records.items() %}
+        {% if question|length <= 20 %}
+        <tr>
+            <td class="question">{{ question }}</td>
+            <td class="answer">{{ answer }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td class="question" colspan="2">{{ question }}</td>
+        </tr>
+        <tr>
+            <td class="answer" colspan="2">{{ answer }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
 </div>
 
 <!-- 빈 페이지를 blank_pages 숫자만큼 추가 -->
